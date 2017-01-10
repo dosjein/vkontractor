@@ -8,8 +8,7 @@
         "php": ">=5.5.9",
         "laravel/framework": "5.2.*",
         "guzzlehttp/guzzle": "~6.2",
-        "getjump/vk": "^0.6.0",
-        "radutopala/skype-bot-php": "^1.1"
+        "getjump/vk": "^0.6.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
