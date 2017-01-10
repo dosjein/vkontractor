@@ -79,6 +79,40 @@ return [
     */
 
     'fallback_locale' => 'en',
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Vkontakti Oauth Access Tokken
+    |--------------------------------------------------------------------------
+    |
+    | Vkontakti Oauth Token Created in https://oauth.vk.com/authorize?client_id=app638461_255644713&scope=wall,offline&redirect_uri=https://oauth.vk.com/blank.html&response_type=token
+    |
+    */
+
+    'vk_key' => env('VKTOKEN' , false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | dosjein/chatbot-rnn chatbot url
+    |--------------------------------------------------------------------------
+    |
+    | More info : https://github.com/dosjein/chatbot-rnn
+    |
+    */
+ 
+    'chatbot_url'  => env('CHATBOT_URL' , false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | dosjein/chatbot-rnn chatbot token
+    |--------------------------------------------------------------------------
+    |
+    | Response token from CHATBOT_URL/?NEW 
+    | { 'ident' : chatbot_token }
+    |
+    */
+ 
+    'chatbot_token'  => env('CHATBOT_TOKEN' , false), 
 
     /*
     |--------------------------------------------------------------------------
