@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Config;
 
 class Kernel extends ConsoleKernel
 {
@@ -13,7 +14,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\MessageResponse::class,   
+        Commands\MessageResponse::class,  
+        Commands\Trigger::class 
     ];
 
     /**
@@ -29,5 +31,14 @@ class Kernel extends ConsoleKernel
         //guess for debug reasons - had incident on GroupChat leave message hang
         $schedule->command('cache:clear')
                   ->everyTenMinutes();
+
+
+
+        //!!!! REBELISH FEATURE LIST
+        if (Config::get('app.mode') == 'rebel'){
+                $schedule->command('vk:trigger')
+                  ->daily();            
+        }
+
     }
 }
