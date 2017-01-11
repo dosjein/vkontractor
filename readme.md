@@ -1,4 +1,4 @@
-## DosjeIN Vkontaktor
+## DosjeIN Vkontraktor
 
 Define Variables in **.env** 
 
