@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
                   ->everyMinute();
         //guess for debug reasons - had incident on GroupChat leave message hang
         $schedule->command('cache:clear')
-                  ->everyTenMinutes();
+                  ->hourly();
 
 
 
