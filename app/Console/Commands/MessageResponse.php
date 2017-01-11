@@ -64,7 +64,7 @@ class MessageResponse extends Command
         $vk = Core::getInstance()->apiVersion('5.5')->setToken(getenv('VKTOKEN'));
 
         //MESSAGES IN
-        foreach($vk->request('messages.get', ['count' => 3 , 'out' => 0])->batch(2) as $data){
+        foreach($vk->request('messages.get', ['count' => 5 , 'out' => 0])->batch(5) as $data){
 
             $userMap = [];
             $userCache = [];
