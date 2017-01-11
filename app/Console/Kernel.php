@@ -26,5 +26,8 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('vk:messages')
                   ->everyMinute();
+        //guess for debug reasons - had incident on GroupChat leave message hang
+        $schedule->command('cache:clear')
+                  ->everyTenMinutes();
     }
 }
