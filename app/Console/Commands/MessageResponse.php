@@ -89,6 +89,7 @@ class MessageResponse extends Command
                 $this->line('sleep bit before '.$value->id.' process');
 
                 $user = $fetchData($value->user_id);
+
                 $message = array($user , $value);
 
                 $expiresAt = Carbon::now()->addMinutes(60);
@@ -116,6 +117,14 @@ class MessageResponse extends Command
 
                 if ($responseMessage){
                     $this->info('Response sent !!!'.$responseMessage);
+
+                    //  mark as read , so will not hand on error
+                    try {
+                        $response = $vk->request('messages.markAsRead', ['message_ids' => $value->id])->get();
+                        $this->info(json_encode($response));                        
+                    } catch (Exception $e) {
+                        $this->error(json_encode($e));
+                    }
 
                     try {
                         $response = $vk->request('messages.send', ['user_id' => $value->user_id , 'message' =>  preg_replace('/\s+/', ' ', trim($responseMessage))])->get();
