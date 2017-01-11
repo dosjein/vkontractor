@@ -99,8 +99,10 @@ class MessageResponse extends Command
                 //    $that->info('message already read ::'.preg_replace('/\s+/', ' ', trim($value->body)));
                 }
 
-                if (Cache::get('last_message_text') != preg_replace('/\s+/', ' ', trim($value->body)){
-                      Cache::put('last_message_text', preg_replace('/\s+/', ' ', trim($value->body), $expiresAt); 
+                if (
+                    Cache::get('last_message_text') != preg_replace('/\s+/', ' ', trim($value->body))
+                    ){
+                      Cache::put('last_message_text', preg_replace('/\s+/', ' ', trim($value->body)), $expiresAt); 
                     $responseMessage = $that->prepareResponse(
                         $value->id , 
                         preg_replace('/\s+/', ' ', trim($value->body))
