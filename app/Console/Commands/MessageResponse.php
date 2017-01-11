@@ -85,7 +85,7 @@ class MessageResponse extends Command
             $that = $this;
             $data->each(function($key, $value) use($fetchData , $that , $vk) {
 
-                sleep(2);
+                sleep(1);
                 $this->line('sleep bit before '.$value->id.' process');
 
                 $user = $fetchData($value->user_id);
