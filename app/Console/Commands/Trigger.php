@@ -15,6 +15,8 @@ use Config;
 use Cache;
 use Carbon\Carbon;
 
+use Exception;
+
 class Trigger extends Command
 {
     /**
@@ -22,7 +24,7 @@ class Trigger extends Command
      *
      * @var string
      */
-    protected $signature = 'vk:trigger {message?} {uid?}';
+    protected $signature = 'vk:trigger {message?} {uid?} {rebel?}';
 
     /**
     * UID vk
@@ -63,21 +65,50 @@ class Trigger extends Command
 
         $vk = Core::getInstance()->apiVersion('5.5')->setToken(getenv('VKTOKEN'));
 
-        if ($this->argument('uid')){
+        if ($this->argument('uid') && !$this->argument('rebel')){
             $this->uid = $this->argument('uid');
             $message = $this->argument('message');
             $this->info('Triggering '.$uid);
         }else{
             $this->info('Triggering last contacted');
-            $that = $this;
-            $vk->request('messages.get', ['count' => 1 , 'out' => 0])->each(
-                function($key, $value) use($that){
-                    $that->info($value->user_id.' will triggered ');
-                    $that->uid = $value->user_id;
-                }
-            );
 
-            if ($this->argument('message')){
+            $that = $this;
+            if ($this->argument('rebel')){
+                try {
+                    $client = new Client();
+                    $options = array();
+
+                    $response = $client->get('https://randomuser.me/api/', $options);
+                    $json = json_decode($response->getBody(true)->getContents() , true);
+
+                    if (!(json_last_error() == JSON_ERROR_NONE && is_array($json))) {
+                        $this->error('Response Error');
+                        return 1;
+                    }else{
+                        $name = $json['results'][0]['name']['first'];
+                    }
+
+                } catch (BadResponseException $ex) {
+                    $error =  array('error' => 1 , 'details' => 'problems : '.$ex->getResponse()->getBody()); 
+                    $this->error(json_encode($error));
+                }
+
+                $vk->request('users.search', ['count' => 1 , 'online' => 1 , 'q' => $name])->each(
+                    function($key, $value) use($that){
+                        $that->info($value->id.' will triggered ');
+                        $that->uid = $value->id;
+                    }
+                ); 
+            }else{
+                $vk->request('messages.get', ['count' => 1 , 'out' => 0])->each(
+                    function($key, $value) use($that){
+                        $that->info($value->user_id.' will triggered ');
+                        $that->uid = $value->user_id;
+                    }
+                );                
+            }
+
+            if ($this->argument('message') && !$this->argument('rebel')){
                 $message = $this->argument('message');
             }else{
                 //get Chuck Norris quote here for a test ... AnyWay 
