@@ -36,6 +36,9 @@ class Kernel extends ConsoleKernel
 
         //!!!! REBELISH FEATURE LIST
         if (Config::get('app.mode') == 'rebel'){
+
+                $schedule->command('cache:clear 1 1 1')
+                          ->everyTenMinutes();
                 $schedule->command('vk:trigger')
                   ->daily();            
         }
