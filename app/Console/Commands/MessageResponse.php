@@ -66,8 +66,6 @@ class MessageResponse extends Command
         //MESSAGES IN
         foreach($vk->request('messages.get', ['count' => 5 , 'out' => 0])->batch(5) as $data){
 
-            sleep(2);
-            $this->line('sleep bit before');
             $userMap = [];
             $userCache = [];
 
@@ -87,6 +85,9 @@ class MessageResponse extends Command
             $that = $this;
             $data->each(function($key, $value) use($fetchData , $that , $vk) {
 
+                sleep(2);
+                $this->line('sleep bit before '.$value->id.' process');
+
                 $user = $fetchData($value->user_id);
                 $message = array($user , $value);
 
@@ -98,10 +99,16 @@ class MessageResponse extends Command
                 //    $that->info('message already read ::'.preg_replace('/\s+/', ' ', trim($value->body)));
                 }
 
-                $responseMessage = $that->prepareResponse(
-                    $value->id , 
-                    preg_replace('/\s+/', ' ', trim($value->body))
-                );
+                if (Cache::get('last_message_text') != preg_replace('/\s+/', ' ', trim($value->body)){
+                      Cache::put('last_message_text', preg_replace('/\s+/', ' ', trim($value->body), $expiresAt); 
+                    $responseMessage = $that->prepareResponse(
+                        $value->id , 
+                        preg_replace('/\s+/', ' ', trim($value->body))
+                    );                  
+                }else{
+                    $this->error('spam attempt');
+                }
+
 
                 if ($responseMessage){
                     $this->info('Response sent !!!'.$responseMessage);
