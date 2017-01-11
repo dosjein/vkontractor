@@ -1,3 +1,13 @@
+## DosjeIN Vkontaktor
+
+Define Variables in **.env** 
+
+- VKTOKEN - Vkontakti Oauth Token . How to get it more details in [getjump/VkApiPHP](https://github.com/getjump/VkApiPHP#explanation) repository
+- CHATBOT_URL - [dosjein/chatbot-rnn](https://github.com/dosjein/chatbot-rnn) instance url
+- CHATBOT_TOKEN - Ident or Token created by asking NEW in ChatBot instance. [Small setup notes](https://github.com/dosjein/chatbot-rnn#usage)
+
+If any question - feel free to ask at **dosjein[at]gmail[etc]** referencing to Ronalds Sovas or John Dosje
+
 ## Laravel PHP Framework
 
 [![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
