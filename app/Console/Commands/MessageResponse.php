@@ -110,6 +110,7 @@ class MessageResponse extends Command
                     );                  
                 }else{
                     $this->error('spam attempt');
+                    $responseMessage = false;
                 }
 
 
