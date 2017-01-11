@@ -91,9 +91,10 @@ class MessageResponse extends Command
                 $user = $fetchData($value->user_id);
                 $message = array($user , $value);
 
+                $expiresAt = Carbon::now()->addMinutes(60);
+
                 if ($value->read_state == 0 && !Cache::has($value->id.'_message')){
                     $that->info('reporting new message '.preg_replace('/\s+/', ' ', trim($value->body)));
-                    $expiresAt = Carbon::now()->addMinutes(60);
                     Cache::put($value->id.'_message', json_encode($value), $expiresAt); 
                 //}else{
                 //    $that->info('message already read ::'.preg_replace('/\s+/', ' ', trim($value->body)));
