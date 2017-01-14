@@ -8,6 +8,10 @@ Define Variables in **.env**
 
 If any question - feel free to ask at **dosjein[at]gmail[etc]** referencing to Ronalds Sovas or John Dosje
 
+DosjeIN Vkontraktor is INTENDED TO BE USED IN SCOPE OF LAW. 
+Please be always aware of what you’re doing. 
+I AM NOT RESPONSIBLE FOR ANY DAMAGES THAT HAPPEN BY USING THIS SOFTWARE!
+
 ## Laravel PHP Framework
 
 [![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
