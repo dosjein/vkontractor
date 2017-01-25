@@ -112,26 +112,30 @@ class Trigger extends Command
                 $message = $this->argument('message');
             }else{
                 //get Chuck Norris quote here for a test ... AnyWay 
-                $client = new Client();
-                $options = array();
+                if (getenv('REBEL_MSG')){
+                    $message = getenv('REBEL_MSG');
+                }else{
+                    $client = new Client();
+                    $options = array();
 
-                try {
+                    try {
 
-                    $response = $client->get('https://api.chucknorris.io/jokes/random', $options);
-                    $json = json_decode($response->getBody(true)->getContents() , true);
+                        $response = $client->get('https://api.chucknorris.io/jokes/random', $options);
+                        $json = json_decode($response->getBody(true)->getContents() , true);
 
-                    if (!(json_last_error() == JSON_ERROR_NONE && is_array($json))) {
-                        $this->error('Response Error');
+                        if (!(json_last_error() == JSON_ERROR_NONE && is_array($json))) {
+                            $this->error('Response Error');
+                            return 1;
+                        }else{
+                            $message = $json['value'];
+                        }
+
+                    } catch (BadResponseException $ex) {
+                        $error =  array('error' => 1 , 'details' => 'problems : '.$ex->getResponse()->getBody()); 
+
+                        $this->error(json_encode($error));
                         return 1;
-                    }else{
-                        $message = $json['value'];
                     }
-
-                } catch (BadResponseException $ex) {
-                    $error =  array('error' => 1 , 'details' => 'problems : '.$ex->getResponse()->getBody()); 
-
-                    $this->error(json_encode($error));
-                    return 1;
                 }
             }
 
