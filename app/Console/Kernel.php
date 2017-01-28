@@ -15,7 +15,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\MessageResponse::class,  
-        Commands\Trigger::class 
+        Commands\Trigger::class ,
+        Commands\CusterPersonGather::class
     ];
 
     /**

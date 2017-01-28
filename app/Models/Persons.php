@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Model;
+namespace App\Models;
 
 use Clusterpoint\Model;
-
-//App\Model\Persons
+use Config;
 
 class Persons extends Model
 {
-    protected $db = env('CP_PERSONS', 'database.persons'); // set your databse and collection names
-    //protected $primaryKey = "custom_id"; // If you want to define specific specific primary key, default = _id
+    protected $db = 'tdx.persons';
 }
