@@ -171,7 +171,8 @@ class CusterPersonGather extends Command
                 $personModelObject->save();
                 sleep(1);
             }else{
-                $this->error('not ok that not exists '.$person->_id);
+                $this->error('not ok that not exists '.$person->_id.' ( '.$person->email.')');
+                return 1;
             }
         }
 
