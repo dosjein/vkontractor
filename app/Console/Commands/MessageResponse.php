@@ -208,6 +208,37 @@ class MessageResponse extends Command
         if (!Cache::has($id.'_message_sent') && !Cache::has('message_in_process')){
             $expiresAt = Carbon::now()->addMinutes(60);
 
+            //translate message if possible
+            if (getenv('DEFAULT_TRANSLATE_API') && $message){
+                try {
+
+                    $options = array(
+                        'query' => array(
+                            'language_from' => 'ru' ,
+                            'language_to' => 'en',
+                            'translate_text' => $message
+                        )
+                    );
+
+                    $this->info(getenv('DEFAULT_TRANSLATE_API')."/api/v1/translate");
+
+                    $client = new Client();
+
+                    $response = $client->get(getenv('DEFAULT_TRANSLATE_API')."/api/v1/translate", $options);
+                    $data = json_decode($response->getBody(true)->getContents() , true);
+
+                    if ($data['status'] == 1){
+                        $message = $data['translated_text'];
+                    }
+
+            
+
+                } catch (BadResponseException $ex) {
+                    $return =  array('error' => 1 , 'details' => 'problems : '.$ex->getResponse()->getBody());
+                    $this->error('Dosje Slack register issue: '.json_encode($return));
+                }
+            }
+
             $client = new Client();
             $options = array('query' => array(
                 'IDENT' => Config::get('app.chatbot_token'),
