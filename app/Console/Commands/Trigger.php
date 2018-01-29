@@ -143,7 +143,7 @@ class Trigger extends Command
         }
 
         //translate message if possible
-        if (getenv('DEFAULT_TRANSLATE_API') && $responseMessage){
+        if (getenv('DEFAULT_TRANSLATE_API') && $message){
             try {
 
                 $options = array(
