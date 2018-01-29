@@ -142,6 +142,35 @@ class Trigger extends Command
             
         }
 
+        //translate message if possible
+        if (getenv('DEFAULT_TRANSLATE_API') && $responseMessage){
+            try {
+
+                $options = array(
+                    'query' => array(
+                        'language_from' => 'en' ,
+                        'language_to' => 'ru',
+                        'translate_text' => $message
+                    )
+                );
+
+                $this->info(getenv('DEFAULT_TRANSLATE_API')."/api/v1/translate");
+
+                $response = $this->client->get(getenv('DEFAULT_TRANSLATE_API')."/api/v1/translate", $options);
+                $data = json_decode($response->getBody(true)->getContents() , true);
+
+                if ($data['status'] == 1){
+                    $message = $data['translated_text'];
+                }
+
+        
+
+            } catch (BadResponseException $ex) {
+                $return =  array('error' => 1 , 'details' => 'problems : '.$ex->getResponse()->getBody());
+                $this->error('Dosje Slack register issue: '.json_encode($return));
+            }
+        }
+
 
         try {
             $response = $vk->request('messages.send', ['user_id' => $this->uid , 'message' =>  preg_replace('/\s+/', ' ', trim($message))])->get();
