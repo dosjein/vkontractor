@@ -114,6 +114,35 @@ class MessageResponse extends Command
                     $responseMessage = false;
                 }
 
+                //translate message if possible
+                if (getenv('DEFAULT_TRANSLATE_API') && $responseMessage){
+                    try {
+
+                        $options = array(
+                            'query' => array(
+                                'language_from' => 'en' ,
+                                'language_to' => 'ru',
+                                'translate_text' => $responseMessage
+                            )
+                        );
+
+                        $this->info(getenv('DEFAULT_TRANSLATE_API')."/api/v1/translate");
+
+                        $response = $this->client->get(getenv('DEFAULT_TRANSLATE_API')."/api/v1/translate", $options);
+                        $data = json_decode($response->getBody(true)->getContents() , true);
+
+                        if ($data['status'] == 1){
+                            $responseMessage = $data['translated_text'];
+                        }
+
+                
+
+                    } catch (BadResponseException $ex) {
+                        $return =  array('error' => 1 , 'details' => 'problems : '.$ex->getResponse()->getBody());
+                        $this->error('Dosje Slack register issue: '.json_encode($return));
+                    }
+                }
+
 
                 if ($responseMessage){
                     $this->info('Response sent !!!'.$responseMessage);
