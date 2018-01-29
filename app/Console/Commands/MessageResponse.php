@@ -128,7 +128,9 @@ class MessageResponse extends Command
 
                         $this->info(getenv('DEFAULT_TRANSLATE_API')."/api/v1/translate");
 
-                        $response = $this->client->get(getenv('DEFAULT_TRANSLATE_API')."/api/v1/translate", $options);
+                        $client = new Client();
+
+                        $response = $client->get(getenv('DEFAULT_TRANSLATE_API')."/api/v1/translate", $options);
                         $data = json_decode($response->getBody(true)->getContents() , true);
 
                         if ($data['status'] == 1){
