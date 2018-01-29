@@ -239,6 +239,8 @@ class MessageResponse extends Command
                 }
             }
 
+            $this->line($message);
+
             $client = new Client();
             $options = array('query' => array(
                 'IDENT' => Config::get('app.chatbot_token'),
