@@ -163,6 +163,8 @@ class Trigger extends Command
                     $message = $data['translated_text'];
                 }
 
+                $this->line('new message');
+                $this->line($message);
         
 
             } catch (BadResponseException $ex) {
