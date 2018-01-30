@@ -109,7 +109,8 @@ class MessageResponse extends Command
                       Cache::put('last_message_text', preg_replace('/\s+/', ' ', trim($value->body)), $expiresAt); 
                     $responseMessage = $that->prepareResponse(
                         $value->id , 
-                        preg_replace('/\s+/', ' ', trim($value->body))
+                        preg_replace('/\s+/', ' ', trim($value->body)),
+                        $value->user_id
                     );                  
                 }else{
                     $this->error('spam attempt');
@@ -207,7 +208,7 @@ class MessageResponse extends Command
         **/
     }
 
-    public function prepareResponse($id , $message){
+    public function prepareResponse($id , $message , $user_id){
 
         if (!Cache::has($id.'_message')){
             //$this->error('Message not tagged');
@@ -237,7 +238,7 @@ class MessageResponse extends Command
                             [
                                 'message' => $message ,
                                 'created_at' => Carbon::now(),
-                                'user_id' => $id,
+                                'user_id' => $user_id,
                                 'in' => 1
                             ]
                         );
