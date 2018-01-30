@@ -15,6 +15,8 @@ use Config;
 use Cache;
 use Carbon\Carbon;
 
+use DB;
+
 use Exception;
 
 class MessageResponse extends Command
@@ -145,6 +147,24 @@ class MessageResponse extends Command
                     }
                 }
 
+                if (getenv('DB_CONNECTION'){
+                    try {
+                        DB::connection()->getPdo();
+                        if(DB::connection()->getDatabaseName()){
+                            
+                            DB::connection()->table('messages')->insert(
+                                [
+                                    'message' => $responseMessage ,
+                                    'created_at' => Carbon::now(),
+                                    'user_id' => $value->user_id
+                                ]
+                            );
+                        }
+                    } catch (\Exception $e) {
+                        $this->error("Could not connect to the database.  Please check your configuration.");
+                    }
+                }
+
 
                 if ($responseMessage){
                     $this->info('Response sent !!!'.$responseMessage);
@@ -207,6 +227,25 @@ class MessageResponse extends Command
 
         if (!Cache::has($id.'_message_sent') && !Cache::has('message_in_process')){
             $expiresAt = Carbon::now()->addMinutes(60);
+
+            if (getenv('DB_CONNECTION'){
+                try {
+                    DB::connection()->getPdo();
+                    if(DB::connection()->getDatabaseName()){
+                        
+                        DB::connection()->table('messages')->insert(
+                            [
+                                'message' => $message ,
+                                'created_at' => Carbon::now(),
+                                'user_id' => $id,
+                                'in' => 1
+                            ]
+                        );
+                    }
+                } catch (\Exception $e) {
+                    $this->error("Could not connect to the database.  Please check your configuration.");
+                }
+            }
 
             //translate message if possible
             if (getenv('DEFAULT_TRANSLATE_API') && $message){
