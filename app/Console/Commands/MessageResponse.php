@@ -127,7 +127,7 @@ class MessageResponse extends Command
                                 
                                 DB::connection()->table('messages')->insert(
                                     [
-                                        'message' => $responseMessage ,
+                                        'message' => 'original:'.$responseMessage ,
                                         'created_at' => Carbon::now(),
                                         'user_id' => $value->user_id
                                     ]
@@ -137,7 +137,7 @@ class MessageResponse extends Command
                             $this->error("Could not connect to the database.  Please check your configuration.");
                         }
                     }
-                    
+
                     try {
 
                         $options = array(
@@ -248,27 +248,27 @@ class MessageResponse extends Command
         if (!Cache::has($id.'_message_sent') && !Cache::has('message_in_process')){
             $expiresAt = Carbon::now()->addMinutes(60);
 
-            if (getenv('DB_CONNECTION') && $message){
-                try {
-                    DB::connection()->getPdo();
-                    if(DB::connection()->getDatabaseName()){
-                        
-                        DB::connection()->table('messages')->insert(
-                            [
-                                'message' => $message ,
-                                'created_at' => Carbon::now(),
-                                'user_id' => $user_id,
-                                'in' => 1
-                            ]
-                        );
-                    }
-                } catch (\Exception $e) {
-                    $this->error("Could not connect to the database.  Please check your configuration.");
-                }
-            }
-
             //translate message if possible
             if (getenv('DEFAULT_TRANSLATE_API') && $message){
+
+                if (getenv('DB_CONNECTION') && $message){
+                    try {
+                        DB::connection()->getPdo();
+                        if(DB::connection()->getDatabaseName()){
+                            
+                            DB::connection()->table('messages')->insert(
+                                [
+                                    'message' => 'original:'.$message ,
+                                    'created_at' => Carbon::now(),
+                                    'user_id' => $user_id,
+                                    'in' => 1
+                                ]
+                            );
+                        }
+                    } catch (\Exception $e) {
+                        $this->error("Could not connect to the database.  Please check your configuration.");
+                    }
+                }
                 try {
 
                     $options = array(
@@ -295,6 +295,25 @@ class MessageResponse extends Command
                 } catch (BadResponseException $ex) {
                     $return =  array('error' => 1 , 'details' => 'problems : '.$ex->getResponse()->getBody());
                     $this->error('Dosje Slack register issue: '.json_encode($return));
+                }
+            }
+
+            if (getenv('DB_CONNECTION') && $message){
+                try {
+                    DB::connection()->getPdo();
+                    if(DB::connection()->getDatabaseName()){
+                        
+                        DB::connection()->table('messages')->insert(
+                            [
+                                'message' => $message ,
+                                'created_at' => Carbon::now(),
+                                'user_id' => $user_id,
+                                'in' => 1
+                            ]
+                        );
+                    }
+                } catch (\Exception $e) {
+                    $this->error("Could not connect to the database.  Please check your configuration.");
                 }
             }
 
