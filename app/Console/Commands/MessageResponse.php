@@ -147,7 +147,7 @@ class MessageResponse extends Command
                     }
                 }
 
-                if (getenv('DB_CONNECTION'){
+                if (getenv('DB_CONNECTION')){
                     try {
                         DB::connection()->getPdo();
                         if(DB::connection()->getDatabaseName()){
@@ -228,7 +228,7 @@ class MessageResponse extends Command
         if (!Cache::has($id.'_message_sent') && !Cache::has('message_in_process')){
             $expiresAt = Carbon::now()->addMinutes(60);
 
-            if (getenv('DB_CONNECTION'){
+            if (getenv('DB_CONNECTION')){
                 try {
                     DB::connection()->getPdo();
                     if(DB::connection()->getDatabaseName()){
