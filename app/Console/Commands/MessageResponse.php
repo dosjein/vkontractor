@@ -119,6 +119,25 @@ class MessageResponse extends Command
 
                 //translate message if possible
                 if (getenv('DEFAULT_TRANSLATE_API') && $responseMessage){
+
+                    if (getenv('DB_CONNECTION') && $responseMessage){
+                        try {
+                            DB::connection()->getPdo();
+                            if(DB::connection()->getDatabaseName()){
+                                
+                                DB::connection()->table('messages')->insert(
+                                    [
+                                        'message' => $responseMessage ,
+                                        'created_at' => Carbon::now(),
+                                        'user_id' => $value->user_id
+                                    ]
+                                );
+                            }
+                        } catch (\Exception $e) {
+                            $this->error("Could not connect to the database.  Please check your configuration.");
+                        }
+                    }
+                    
                     try {
 
                         $options = array(
