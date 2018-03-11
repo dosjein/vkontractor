@@ -322,7 +322,8 @@ class MessageResponse extends Command
             $client = new Client();
             $options = array('query' => array(
                 'IDENT' => Config::get('app.chatbot_token'),
-                'IN' => $message
+                'IN' => $message ,
+                'SPEAKER_IDENT' => $user_id
             ));
 
             try {
@@ -350,7 +351,8 @@ class MessageResponse extends Command
 
             $client = new Client();
             $options = array('query' => array(
-                'IDENT' => Config::get('app.chatbot_token'),
+                'IDENT' => Config::get('app.chatbot_token') ,
+                'SPEAKER_IDENT' => $user_id
             ));
 
             try {
