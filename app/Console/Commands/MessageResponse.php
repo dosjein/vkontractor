@@ -26,7 +26,7 @@ class MessageResponse extends Command
      *
      * @var string
      */
-    protected $signature = 'vk:messages {keepalive?}';
+    protected $signature = 'vk:legacy_messages {keepalive?}';
 
     /**
      * The console command description.
@@ -268,7 +268,7 @@ class MessageResponse extends Command
                                     'message' => 'original:'.$message ,
                                     'created_at' => Carbon::now(),
                                     'user_id' => $user_id,
-                                    'in' => 101
+                                    'in' => 1
                                 ]
                             );
                         }
@@ -315,7 +315,7 @@ class MessageResponse extends Command
                                 'message' => $message ,
                                 'created_at' => Carbon::now(),
                                 'user_id' => $user_id,
-                                'in' => 102
+                                'in' => 1
                             ]
                         );
                     }

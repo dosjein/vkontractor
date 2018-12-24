@@ -133,18 +133,18 @@ class MessageSmartResponse extends Command
                         //if has response
                         if ($processor->status == 1 && $dialogItem->last_message->out == 0){
 
-                            // //save incomming message
-                            // $message = new Messages();
-                            // $message->in = 1;
-                            // $message->message = $dialogItem->last_message->text;
-                            // $message->user_id = $dialogItem->last_message->from_id;
-                            // $message->save();
+                            //save incomming message
+                            $message = new Messages();
+                            $message->in = 1;
+                            $message->message = $dialogItem->last_message->text;
+                            $message->user_id = $dialogItem->last_message->from_id;
+                            $message->save();
 
-                            // //save processor status change
-                            // $processor->status = 0;
-                            // $processor->message = $dialogItem->last_message->text;
-                            // $processor->message_id = $dialogItem->last_message->id;
-                            // $processor->save();
+                            //save processor status change
+                            $processor->status = 0;
+                            $processor->message = $dialogItem->last_message->text;
+                            $processor->message_id = $dialogItem->last_message->id;
+                            $processor->save();
 
                         }else if ($dialogItem->last_message->out == 0 && $dialogItem->last_message->text != $processor->message){
                             //new incomming text
