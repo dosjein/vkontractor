@@ -289,7 +289,7 @@ class MessageSmartResponse extends Command
 
                 $waitTime = Carbon::now()->diffInMinutes($process->updated_at);
 
-                $this->info('Waiting time '.$waitTime);
+                $this->info('Waiting time '.$waitTime.' ('.$process->updated_at.')');
 
                 if ($waitTime > 5){
                     $this->error('reCap');
