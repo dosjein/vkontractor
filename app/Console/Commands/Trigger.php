@@ -63,7 +63,7 @@ class Trigger extends Command
             return 1;
         }
 
-        $vk = Core::getInstance()->apiVersion('5.5')->setToken(getenv('VKTOKEN'));
+        $vk = Core::getInstance()->apiVersion('5.92')->setToken(getenv('VKTOKEN'));
 
         if ($this->argument('uid') && !$this->argument('rebel')){
             $this->uid = $this->argument('uid');
@@ -175,8 +175,13 @@ class Trigger extends Command
 
 
         try {
-            $response = $vk->request('messages.send', ['user_id' => $this->uid , 'message' =>  preg_replace('/\s+/', ' ', trim($message))])->get();
-            $this->info(json_encode($response));                        
+
+            if (isset($this->uid) && $this->uid){
+                $response = $vk->request('messages.send', ['user_id' => $this->uid , 'message' =>  preg_replace('/\s+/', ' ', trim($message)) , 'random_id' => rand(5,5000)])->get();
+                $this->info(json_encode($response));    
+            }else{
+                $this->info('uid not defined');
+            }                   
         } catch (Exception $e) {
             $this->error(json_encode($e));
         }

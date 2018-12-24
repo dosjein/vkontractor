@@ -14,6 +14,11 @@ while true; do
 	  screen -d -m -S msg_response bash -c "php artisan vk:message"
 	fi
 
+	#Telegram Responses
+	if ! screen -list | grep -q tele_msg_response; then
+	  screen -d -m -S tele_msg_response bash -c "php artisan telegram:message"
+	fi
+
 	echo $(date +%d-%m-%Y" "%H:%M:%S) >> ./storage/screen.log
 	sleep 60 
 done

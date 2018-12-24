@@ -12,6 +12,19 @@ DosjeIN Vkontraktor is INTENDED TO BE USED IN SCOPE OF LAW.
 Please be always aware of what you’re doing. 
 I AM NOT RESPONSIBLE FOR ANY DAMAGES THAT HAPPEN BY USING THIS SOFTWARE!
 
+
+##16.07.2018 
+
+#1 /var/www/vendor/irazasyed/telegram-bot-sdk/src/Api.php(1014): Telegram\Bot\TelegramClient->sendRequest(Object(Telegram\Bot\TelegramRequest))
+#2 /var/www/vendor/irazasyed/telegram-bot-sdk/src/Api.php(957): Telegram\Bot\Api->sendRequest('POST', 'getMe', Array)
+#3 /var/www/vendor/irazasyed/telegram-bot-sdk/src/Api.php(269): Telegram\Bot\Api->post('getMe')
+#4 /var/www/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php(215): Telegram\Bot\Api->getMe()
+#5 /var/www/app/Console/Commands/TelegramTest.php(230): Illuminate\Support\Facades\Facade::__callStatic('getMe', Array)
+#6 [internal function]: App\Console\Commands\TelegramTest->handle()
+
+
+
+
 ## Laravel PHP Framework
 
 [![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
