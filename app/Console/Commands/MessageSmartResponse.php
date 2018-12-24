@@ -390,8 +390,7 @@ class MessageSmartResponse extends Command
                 return 1;
             }
 
-            $vk = Core::getInstance()->apiVersion('5.92')->setToken(getenv('VKTOKEN'));
-
+            $vk = Core::getInstance()->apiVersion('5.5')->setToken(getenv('VKTOKEN'));
             $this->info('Response sent !!!'.$responseMessage);
 
             //  mark as read , so will not hand on error
@@ -401,6 +400,8 @@ class MessageSmartResponse extends Command
             } catch (Exception $e) {
                 $this->error($e->getMessage());
             }
+
+            $vk = Core::getInstance()->apiVersion('5.92')->setToken(getenv('VKTOKEN'));
 
             try {
 
