@@ -66,7 +66,7 @@ class MessageResponse extends Command
         $vk = Core::getInstance()->apiVersion('5.5')->setToken(getenv('VKTOKEN'));
 
         //MESSAGES IN
-        foreach($vk->request('messages.search', ['q' => 'a', 'count' => 5 , 'out' => 0])->batch(5) as $data){
+        foreach($vk->request('messages.search', ['q' => 'a', 'count' => 20 , 'out' => 0])->batch(20) as $data){
 
             $userMap = [];
             $userCache = [];
@@ -89,6 +89,13 @@ class MessageResponse extends Command
 
                 sleep(1);
                 $this->line('sleep bit before '.$value->id.' process');
+
+                $this->info($value->body);
+                $this->error(json_encode($value));
+
+                if ($value->out){
+                    return;
+                }
 
                 $user = $fetchData($value->user_id);
 
@@ -261,7 +268,7 @@ class MessageResponse extends Command
                                     'message' => 'original:'.$message ,
                                     'created_at' => Carbon::now(),
                                     'user_id' => $user_id,
-                                    'in' => 1
+                                    'in' => 101
                                 ]
                             );
                         }
@@ -308,7 +315,7 @@ class MessageResponse extends Command
                                 'message' => $message ,
                                 'created_at' => Carbon::now(),
                                 'user_id' => $user_id,
-                                'in' => 1
+                                'in' => 102
                             ]
                         );
                     }

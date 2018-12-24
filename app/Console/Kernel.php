@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\MessageResponse::class,  
+        Commands\MessageSmartResponse::class,  
         Commands\Trigger::class ,
         Commands\CusterPersonGather::class,
         Commands\TelegramTest::class
