@@ -277,6 +277,26 @@ class MessageSmartResponse extends Command
         if (Processor::where('status' , 3)->count() > 0){
             foreach (Processor::where('status' , 3)->get() as $key => $process) {
                 $this->info($process->id.' lookup');
+
+                //quickFix
+                if (trim($process->message) == ''){
+                    $process->message = 'Иид хнайу';
+                    $this->error($process->message);
+                    $process->status = 0;
+                    $process->save();
+                }
+
+
+                $waitTime = Carbon::now()->diffInMinutes($process->updated_at);
+
+                $this->info('Waiting time '.$waitTime);
+
+                if ($waitTime > 5){
+                    $this->error('reCap');
+                    $process->status = 0;
+                    $process->save();
+                }
+
                 $client = new Client();
                 $options = array('query' => array(
                     'IDENT' => Config::get('app.chatbot_token') ,
