@@ -29,7 +29,7 @@ class MessageSmartResponse extends Command
      *
      * @var string
      */
-    protected $signature = 'vk:messages {keepalive?}';
+    protected $signature = 'vk:messages {ignore_news?}';
 
     /**
      * The console command description.
@@ -70,100 +70,104 @@ class MessageSmartResponse extends Command
 
         $this->error('Loading all dialogs');
 
-        if (Processor::count() == 0){
-            $this->info('First load operations');
-            foreach($vk->request('messages.getConversations', ['count' => 200 ])->batch(200) as $data){
-                foreach ($data->items as $key => $dialogItem) {
-                    $processor = new Processor();
+        if (!$this->argument('ignore_news')){
 
-                    $processor->user_id = $dialogItem->last_message->from_id;
-                    $processor->status = $dialogItem->last_message->out;
+            if (Processor::count() == 0){
+                $this->info('First load operations');
+                foreach($vk->request('messages.getConversations', ['count' => 200 ])->batch(200) as $data){
+                    foreach ($data->items as $key => $dialogItem) {
+                        $processor = new Processor();
 
-                    if (!$dialogItem->conversation->can_write->allowed){
-                        $processor->status = 5;
+                        $processor->user_id = $dialogItem->last_message->from_id;
+                        $processor->status = $dialogItem->last_message->out;
+
+                        if (!$dialogItem->conversation->can_write->allowed){
+                            $processor->status = 5;
+                        }
+
+                        $processor->message_id = $dialogItem->last_message->id;
+
+                        $processor->message = $dialogItem->last_message->text;
+                        $processor->save();
                     }
-
-                    $processor->message_id = $dialogItem->last_message->id;
-
-                    $processor->message = $dialogItem->last_message->text;
-                    $processor->save();
                 }
             }
-        }
 
-        $this->info('incomming message process');
+            $this->info('incomming message process');
 
-        foreach($vk->request('messages.getConversations', ['count' => 200 ])->batch(200) as $data){
-            $this->info('wait for 2 sec');
-            sleep(2);
-            foreach ($data->items as $key => $dialogItem) {
-                $processorRequest = Processor::where('user_id' , $dialogItem->last_message->from_id);
-                if ($processorRequest->count() == 0){
-                    $processor = new Processor();
+            foreach($vk->request('messages.getConversations', ['count' => 200 ])->batch(200) as $data){
+                $this->info('wait for 2 sec');
+                sleep(2);
+                foreach ($data->items as $key => $dialogItem) {
+                    $processorRequest = Processor::where('user_id' , $dialogItem->last_message->from_id);
+                    if ($processorRequest->count() == 0){
+                        $processor = new Processor();
 
-                    $processor->user_id = $dialogItem->last_message->from_id;
-                    $processor->status = $dialogItem->last_message->out;
+                        $processor->user_id = $dialogItem->last_message->from_id;
+                        $processor->status = $dialogItem->last_message->out;
 
-                    if (!$dialogItem->conversation->can_write->allowed){
-                        $processor->status = 5;
-                    }
+                        if (!$dialogItem->conversation->can_write->allowed){
+                            $processor->status = 5;
+                        }
 
-                    $processor->message = $dialogItem->last_message->text;
-                    $processor->message_id = $dialogItem->last_message->id;
-                    $processor->save();
-                }else{
-                    $processor = $processorRequest->first();
-
-                    //if banned
-                    if (!$dialogItem->conversation->can_write->allowed){
-                        $processor->status = 5;
+                        $processor->message = $dialogItem->last_message->text;
+                        $processor->message_id = $dialogItem->last_message->id;
                         $processor->save();
-                        //message procedure (must extract as external method)
-                        if (Messages::where('message' , 'BAN')->where('user_id' , $dialogItem->last_message->from_id)->count() == 0){
+                    }else{
+                        $processor = $processorRequest->first();
+
+                        //if banned
+                        if (!$dialogItem->conversation->can_write->allowed){
+                            $processor->status = 5;
+                            $processor->save();
+                            //message procedure (must extract as external method)
+                            if (Messages::where('message' , 'BAN')->where('user_id' , $dialogItem->last_message->from_id)->count() == 0){
+                                $message = new Messages();
+                                $message->in = 1;
+                                $message->message = 'BAN';
+                                $message->user_id = $dialogItem->last_message->from_id;
+                                $message->save();
+                            }
+                        }
+
+                        //if has response
+                        if ($processor->status == 1 && $dialogItem->last_message->out == 0){
+
+                            // //save incomming message
+                            // $message = new Messages();
+                            // $message->in = 1;
+                            // $message->message = $dialogItem->last_message->text;
+                            // $message->user_id = $dialogItem->last_message->from_id;
+                            // $message->save();
+
+                            // //save processor status change
+                            // $processor->status = 0;
+                            // $processor->message = $dialogItem->last_message->text;
+                            // $processor->message_id = $dialogItem->last_message->id;
+                            // $processor->save();
+
+                        }else if ($dialogItem->last_message->out == 0 && $dialogItem->last_message->text != $processor->message){
+                            //new incomming text
                             $message = new Messages();
                             $message->in = 1;
-                            $message->message = 'BAN';
+                            $message->message = $dialogItem->last_message->text;
                             $message->user_id = $dialogItem->last_message->from_id;
                             $message->save();
+
+                            //change if messge is not in process
+                            if ($processor->status != 3){
+                                $processor->status = 0;
+                                $processor->message = $dialogItem->last_message->text;
+                                $processor->message_id = $dialogItem->last_message->id;
+                            }else{
+                                $processor->message_id = $dialogItem->last_message->id;
+                            }
+                            $processor->save();
                         }
-                    }
-
-                    //if has response
-                    if ($processor->status == 1 && $dialogItem->last_message->out == 0){
-
-                        // //save incomming message
-                        // $message = new Messages();
-                        // $message->in = 1;
-                        // $message->message = $dialogItem->last_message->text;
-                        // $message->user_id = $dialogItem->last_message->from_id;
-                        // $message->save();
-
-                        // //save processor status change
-                        // $processor->status = 0;
-                        // $processor->message = $dialogItem->last_message->text;
-                        // $processor->message_id = $dialogItem->last_message->id;
-                        // $processor->save();
-
-                    }else if ($dialogItem->last_message->out == 0 && $dialogItem->last_message->text != $processor->message){
-                        //new incomming text
-                        $message = new Messages();
-                        $message->in = 1;
-                        $message->message = $dialogItem->last_message->text;
-                        $message->user_id = $dialogItem->last_message->from_id;
-                        $message->save();
-
-                        //change if messge is not in process
-                        if ($processor->status != 3){
-                            $processor->status = 0;
-                            $processor->message = $dialogItem->last_message->text;
-                            $processor->message_id = $dialogItem->last_message->id;
-                        }else{
-                            $processor->message_id = $dialogItem->last_message->id;
-                        }
-                        $processor->save();
                     }
                 }
             }
+
         }
 
         $this->info('response prepare process');
