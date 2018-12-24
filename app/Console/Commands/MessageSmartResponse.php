@@ -395,7 +395,7 @@ class MessageSmartResponse extends Command
 
             //  mark as read , so will not hand on error
             try {
-                $response = $vk->request('messages.markAsRead', ['message_ids' => $processor->message_id])->get();
+                $response = $vk->request('messages.markAsRead', ['message_ids' => [$processor->message_id]])->get();
                 $this->info(json_encode($response));                        
             } catch (Exception $e) {
                 $this->error($e->getMessage());
