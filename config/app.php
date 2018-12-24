@@ -201,8 +201,6 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-
-        Clusterpoint\ClusterpointServiceProvider::class,
         Telegram\Bot\Laravel\TelegramServiceProvider::class
 
     ],
