@@ -382,6 +382,16 @@ class MessageSmartResponse extends Command
 
 
         if ($responseMessage){
+
+            $vkKey = Config::get('app.vk_key');
+
+            if (!$vkKey){
+                $this->error('vk oauth key not defined');
+                return 1;
+            }
+
+            $vk = Core::getInstance()->apiVersion('5.92')->setToken(getenv('VKTOKEN'));
+
             $this->info('Response sent !!!'.$responseMessage);
 
             //  mark as read , so will not hand on error
