@@ -284,6 +284,7 @@ class MessageSmartResponse extends Command
                     $this->error($process->message);
                     $process->status = 0;
                     $process->save();
+                    return;
                 }
 
 
@@ -295,6 +296,7 @@ class MessageSmartResponse extends Command
                     $this->error('reCap');
                     $process->status = 0;
                     $process->save();
+                    return;
                 }
 
                 $client = new Client();
