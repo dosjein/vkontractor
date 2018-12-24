@@ -394,7 +394,7 @@ class MessageSmartResponse extends Command
 
             try {
 
-                $response = $vk->request('messages.send', ['user_id' => $processor->user_id , 'message' =>  preg_replace('/\s+/', ' ', trim($responseMessage)) , 'random_id' => rand(5,5000)] ])->get();
+                $response = $vk->request('messages.send', ['user_id' => $processor->user_id , 'message' =>  preg_replace('/\s+/', ' ', trim($responseMessage)) , 'random_id' => rand(5,5000)])->get();
                 $this->info(json_encode($response));                        
             } catch (Exception $e) {
                 $this->error($e->getMessage());
