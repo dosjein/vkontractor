@@ -389,14 +389,15 @@ class MessageSmartResponse extends Command
                 $response = $vk->request('messages.markAsRead', ['message_ids' => $processor->message_id])->get();
                 $this->info(json_encode($response));                        
             } catch (Exception $e) {
-                $this->error(json_encode($e));
+                $this->error($e->getMessage());
             }
 
             try {
-                $response = $vk->request('messages.send', ['user_id' => $processor->user_id , 'message' =>  preg_replace('/\s+/', ' ', trim($responseMessage))])->get();
+
+                $response = $vk->request('messages.send', ['user_id' => $processor->user_id , 'message' =>  preg_replace('/\s+/', ' ', trim($responseMessage)) , 'random_id' => rand(5,5000)] ])->get();
                 $this->info(json_encode($response));                        
             } catch (Exception $e) {
-                $this->error(json_encode($e));
+                $this->error($e->getMessage());
             }
 
         }
