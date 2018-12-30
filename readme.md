@@ -22,7 +22,7 @@ I AM NOT RESPONSIBLE FOR ANY DAMAGES THAT HAPPEN BY USING THIS SOFTWARE!
 #5 /var/www/app/Console/Commands/TelegramTest.php(230): Illuminate\Support\Facades\Facade::__callStatic('getMe', Array)
 #6 [internal function]: App\Console\Commands\TelegramTest->handle()
 
-
+while true; do php artisan vk:messages 1; sleep .5; done
 
 
 ## Laravel PHP Framework

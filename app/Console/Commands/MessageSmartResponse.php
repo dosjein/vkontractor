@@ -280,7 +280,7 @@ class MessageSmartResponse extends Command
 
                 //quickFix
                 if (trim($process->message) == ''){
-                    $process->message = 'Иид хнайу';
+                    $process->message = 'Funny Gif or video or picture';
                     $this->error($process->message);
                     $process->status = 0;
                     $process->save();
@@ -319,6 +319,9 @@ class MessageSmartResponse extends Command
                         $this->sendVkMessage($json['message'] , $process);
                         $process->status = 1;
                         $process->delete();
+                    }else if (isset($json['exception'])){
+                        $process->status = 5;
+                        $process->save();
                     }else{
                         $this->line($json['edit_time']);
                     }
