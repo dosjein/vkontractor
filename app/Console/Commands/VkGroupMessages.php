@@ -6,6 +6,9 @@ use Illuminate\Console\Command;
 
 use \App\Traits\RequestTrait;
 
+use \GuzzleHttp\Client;
+use \GuzzleHttp\Exception\BadResponseException;
+
 use getjump\Vk\Core;
 use getjump\Vk\Wrapper\Friends;
 use getjump\Vk\Exception\Error;
@@ -18,7 +21,6 @@ use DB;
 
 use Exception;
 
-use App\Processor;
 use App\Messages;
 
 class VkGroupMessages extends Command
@@ -59,9 +61,9 @@ class VkGroupMessages extends Command
         
         $this->info(json_encode($response)); 
 
-        $response = $vk->request('groups.getById', [
-            'group_ids' => [$group] , 
-        ])->getResponse();   
+        // $response = $vk->request('groups.getById', [
+        //     'group_ids' => [$group] , 
+        // ])->getResponse();   
 
         $this->info(json_encode($response));                     
     }
@@ -93,6 +95,8 @@ class VkGroupMessages extends Command
 
         $vk = Core::getInstance()->apiVersion('5.5')->setToken(getenv('VKTOKEN'));
 
+        $client = new Client();
+
         $this->error('Loading all dialogs');
 
         $groupUpdates = $this->requestGET([] , $jsapi.'/api/v1/vk_groups_updates');
@@ -102,47 +106,71 @@ class VkGroupMessages extends Command
 
                 $this->info('Wall for '.$groupData['id'].' '.(isset($groupData['id'])? $groupData['id'] : 'NoName'));
 
-                foreach($vk->request('wall.get', ['owner_id' => $groupData['id'] ])->batch(50) as $data){
+                if (isset($groupData['error'])){
+                    $this->error($groupData['error']);
+                    continue;
+                }
+
+                if (!isset($groupData['group_id'])){
+                    $this->error('Missing Group ID');
+                    continue;
+                }
+
+                foreach($vk->request('wall.get', ['owner_id' => $groupData['group_id']  , 'count' => 2])->batch(5) as $data){
 
                     sleep(2);
                     if ($data->count == 0){
                         continue;
                     }
 
-                    foreach ($data->data as $key => $wallRecord) {
-                        $this->createComment($vk , $groupData['id'] , $wallRecord->id , 'I Love you :)');
-                        $this->info('https://vk.com/feed?w=wall-'.$groupData['id'].'_'.$wallRecord->id);
-                        dd($wallRecord);
+                    $this->info('Total to porcess '.$data->count);
+
+                    if (!$data->data){
+                        continue;
+                    }
+
+                    foreach (array_slice($data->data, 0, 3) as $key => $wallRecord) {
+
+                        try {
+
+                            $response = $client->get('https://api.chucknorris.io/jokes/random', array());
+                            $json = json_decode($response->getBody(true)->getContents() , true);
+
+                            if (!(json_last_error() == JSON_ERROR_NONE && is_array($json))) {
+                                $this->error('Response Error');
+                                continue;
+                            }else{
+                                $message = $json['value'];
+                            }
+
+                        } catch (BadResponseException $ex) {
+                            $error =  array('error' => 1 , 'details' => 'problems : '.$ex->getResponse()->getBody()); 
+
+                            $this->error(json_encode($error));
+                            continue;
+                        }
+
+                        $messageRequest = Messages::where('user_id' , 'https://vk.com/feed?w=wall-'.$groupData['id'].'_'.$wallRecord->id);
+
+                        if ($messageRequest->count() == 0){
+                            $this->createComment($vk , $groupData['group_id'] , $wallRecord->id , $message);
+                            $this->info('https://vk.com/feed?w=wall-'.$groupData['id'].'_'.$wallRecord->id);
+
+                            $messageObject = new Messages();
+                            $messageObject->user_id = 'https://vk.com/feed?w=wall-'.$groupData['id'].'_'.$wallRecord->id;
+                            $messageObject->in = 0;
+                            $messageObject->message = $message;
+                            $messageObject->save();
+                        }else{
+                            break;
+                        }
+
+                        $this->info('Wait for me');
+                        sleep(40);
                     }
 
 
-                    // $this->line($accountItem['message_sender_id'].' groups');
-                    // $that = $this;
-                    // $data->each(function($key, $value) use($accountItem , $that , $vk , $cerf , $jsapi , $accountItem) {
 
-                    //     $groupNotes = Notes::where('session' , 'vkgroup')->where('name' , $value->id);
-
-                    //     $detailsArray = json_decode(json_encode($value) , true);
-
-                    //     $detailsArray['source_user'] = $accountItem['message_sender_id'];
-
-                    //     if ($groupNotes->count() == 0){
-                    //         if (isset($value->name)){
-                    //             $this->info('save note for '.$value->name);
-                    //         }else if (isset($value->id)){
-                    //             $this->info('save note for '.$value->id);
-                    //         }
-
-                    //         //if we have a group , we save it
-                    //         if (isset($value->id)){
-                    //             $groupNote = new Notes;
-                    //             $groupNote->name = $value->id;
-                    //             $groupNote->session = 'vkgroup';
-                    //             $groupNote->description = json_encode($detailsArray);
-                    //             $groupNote->save();
-                    //         }
-                    //     }
-                    // });
                 }  
                          
             } catch (Error $e) {
