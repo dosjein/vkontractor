@@ -159,7 +159,7 @@ class VkGroupMessages extends Command
 
                                         $options = array('query' => array(
                                             'IDENT' => Config::get('app.chatbot_token'),
-                                            'IN' => $message
+                                            //'IN' => $message
                                         ));
 
                                         $response = $client->get(Config::get('app.chatbot_url'), $options);
