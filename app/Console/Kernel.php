@@ -17,8 +17,9 @@ class Kernel extends ConsoleKernel
         Commands\MessageSmartResponse::class, 
         Commands\MessageResponse::class, 
         Commands\Trigger::class ,
-        Commands\CusterPersonGather::class,
-        Commands\TelegramTest::class
+        //Commands\CusterPersonGather::class,
+        Commands\TelegramTest::class,
+        Commands\VkGroupMessages::class
     ];
 
     /**
