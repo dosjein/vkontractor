@@ -32,7 +32,7 @@ class VkGroupMessages extends Command
      *
      * @var string
      */
-    protected $signature = 'vk:group_trigger';
+    protected $signature = 'vk:group_trigger {psycho?}';
 
     /**
      * The console command description.
@@ -131,28 +131,60 @@ class VkGroupMessages extends Command
 
                     foreach (array_slice($data->data, 0, 3) as $key => $wallRecord) {
 
-                        try {
-
-                            $response = $client->get('https://api.chucknorris.io/jokes/random', array());
-                            $json = json_decode($response->getBody(true)->getContents() , true);
-
-                            if (!(json_last_error() == JSON_ERROR_NONE && is_array($json))) {
-                                $this->error('Response Error');
-                                continue;
-                            }else{
-                                $message = $json['value'];
-                            }
-
-                        } catch (BadResponseException $ex) {
-                            $error =  array('error' => 1 , 'details' => 'problems : '.$ex->getResponse()->getBody()); 
-
-                            $this->error(json_encode($error));
-                            continue;
-                        }
-
                         $messageRequest = Messages::where('user_id' , 'https://vk.com/feed?w=wall-'.$groupData['id'].'_'.$wallRecord->id);
 
                         if ($messageRequest->count() == 0){
+
+                            try {
+
+                                $response = $client->get('https://api.chucknorris.io/jokes/random', array());
+                                $json = json_decode($response->getBody(true)->getContents() , true);
+
+                                if (!(json_last_error() == JSON_ERROR_NONE && is_array($json))) {
+                                    $this->error('Response Error');
+                                    continue;
+                                }else{
+                                    $message = $json['value'];
+                                }
+
+                            } catch (BadResponseException $ex) {
+                                $error =  array('error' => 1 , 'details' => 'problems : '.$ex->getResponse()->getBody()); 
+
+                                $this->error(json_encode($error));
+                                continue;
+                            }  
+
+                            if ($this->argument('psycho')){
+                                    try {
+
+                                        $options = array('query' => array(
+                                            'IDENT' => Config::get('app.chatbot_token'),
+                                            'IN' => $message
+                                        ));
+
+                                        $response = $client->get(Config::get('app.chatbot_url'), $options);
+                                        $json = json_decode($response->getBody(true)->getContents() , true);
+
+                                        if (!(json_last_error() == JSON_ERROR_NONE && is_array($json))) {
+                                            $this->error('Response Error');
+                                            continue;
+                                        }
+
+                                        $message = $json['message'];
+
+                                        $this->info('Normal?: '.$message);
+
+
+                                    } catch (BadResponseException $ex) {
+                                        $error =  array('error' => 1 , 'details' => 'problems : '.$ex->getResponse()->getBody()); 
+
+                                        $this->error(json_encode($error));
+                                        continue;
+                                    }
+                            }
+
+
+
                             $this->createComment($vk , $groupData['group_id'] , $wallRecord->id , $message);
                             $this->info('https://vk.com/feed?w=wall-'.$groupData['id'].'_'.$wallRecord->id);
 
