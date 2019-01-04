@@ -159,7 +159,7 @@ class VkGroupMessages extends Command
 
                                         $options = array('query' => array(
                                             'IDENT' => Config::get('app.chatbot_token'),
-                                            //'IN' => $message
+                                            'IN' => $message
                                         ));
 
                                         $response = $client->get(Config::get('app.chatbot_url'), $options);
@@ -170,6 +170,20 @@ class VkGroupMessages extends Command
                                             continue;
                                         }
 
+                                        if (!isset($json['message'])){
+                                            $options = array('query' => array(
+                                                'IDENT' => Config::get('app.chatbot_token'),
+                                                //'IN' => $message
+                                            ));
+
+                                            $response = $client->get(Config::get('app.chatbot_url'), $options);
+                                            $json = json_decode($response->getBody(true)->getContents() , true);
+
+                                            if (!(json_last_error() == JSON_ERROR_NONE && is_array($json))) {
+                                                $this->error('Response Error');
+                                                continue;
+                                            }
+                                        }
                                         $message = $json['message'];
 
                                         $this->info('Normal?: '.$message);
@@ -210,7 +224,5 @@ class VkGroupMessages extends Command
             }
             # code... 
         }
-
-        dd($groupUpdates);
     }
 }
