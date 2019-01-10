@@ -5,3 +5,4 @@ Homestead.json
 .env
 /storage/mysql
 /storage/screen.log
+/storage/models/

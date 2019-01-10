@@ -4,13 +4,19 @@ services:
         image: shivergard/docker-webserver
         ports:
             - 80:80
+            - 86:86
         volumes:
             - .:/var/www
-    heroku:
-        image: shivergard/heroku
+        links:
+            - chatbot:chatbot
+    chatbot:
+        image: shivergard/chatbot
         volumes:
-            - ./:/opt
-            - ./storage/logs:/root
+            - ./storage/php_requests:/chatbot-rnn/storage/php_request 
+            - ./storage/models:/chatbot-rnn/models 
+        ports:
+            - 81:80
+            - 21:22
     mysql:
         image: mariadb:latest
         env_file:

@@ -112,7 +112,7 @@ return [
     |
     */
  
-    'chatbot_url'  => env('CHATBOT_URL' , false),
+    'chatbot_url'  => env('CHATBOT_URL' , 'http://chatbot'),
 
     /*
     |--------------------------------------------------------------------------
@@ -124,7 +124,7 @@ return [
     |
     */
  
-    'chatbot_token'  => env('CHATBOT_TOKEN' , false), 
+    'chatbot_token'  => env('CHATBOT_TOKEN' , 123456), 
 
     /*
     |--------------------------------------------------------------------------
