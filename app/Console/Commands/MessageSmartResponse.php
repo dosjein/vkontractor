@@ -250,10 +250,13 @@ class MessageSmartResponse extends Command
                 $this->info('Chatbot approach '.Config::get('app.chatbot_url'));
 
                 $response = $client->get(Config::get('app.chatbot_url'), $options);
-                $json = json_decode($response->getBody(true)->getContents() , true);
+
+                $contentBody = $response->getBody(true)->getContents();
+
+                $json = json_decode($contentBody , true);
 
                 if (!(json_last_error() == JSON_ERROR_NONE && is_array($json))) {
-                    $this->error('Response Error [1 :"'.$response->getBody(true)->getContents().'"]');
+                    $this->error('Response Error [1 :"'.$contentBody.'"]');
                 }else{
                     //save edit time 
                     $processingText->reponse = $json['edit_time'];
@@ -308,10 +311,13 @@ class MessageSmartResponse extends Command
                 try {
 
                     $response = $client->get(Config::get('app.chatbot_url'), $options);
-                    $json = json_decode($response->getBody(true)->getContents() , true);
+
+                    $content = $response->getBody(true)->getContents();
+
+                    $json = json_decode($content , true);
 
                     if (!(json_last_error() == JSON_ERROR_NONE && is_array($json))) {
-                        $this->error('Response Error '.$response->getBody(true)->getContents());
+                        $this->error('Response Error '.$content);
                         //TYPO ALERT !!!!
                     }else if ($json['edit_time'] != $process->reponse){
                         $this->line($json['message'].' got');
