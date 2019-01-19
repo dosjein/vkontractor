@@ -253,7 +253,7 @@ class MessageSmartResponse extends Command
                 $json = json_decode($response->getBody(true)->getContents() , true);
 
                 if (!(json_last_error() == JSON_ERROR_NONE && is_array($json))) {
-                    $this->error('Response Error '.$response->getBody(true));
+                    $this->error('Response Error [1 :"'.$response->getBody(true)->getContents().'"]');
                 }else{
                     //save edit time 
                     $processingText->reponse = $json['edit_time'];
