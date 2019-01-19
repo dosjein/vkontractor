@@ -258,6 +258,13 @@ class MessageSmartResponse extends Command
                 if (!(json_last_error() == JSON_ERROR_NONE && is_array($json))) {
                     $this->error('Response Error [1 :"'.$contentBody.'"]');
                 }else{
+
+                    if (!isset($json['edit_time'])){
+                        $this->error('unavaliable edit data');
+                        $this->line(json_encode($json));
+                        return 1;
+                    }
+
                     //save edit time 
                     $processingText->reponse = $json['edit_time'];
                     $processingText->save();
