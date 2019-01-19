@@ -311,7 +311,7 @@ class MessageSmartResponse extends Command
                     $json = json_decode($response->getBody(true)->getContents() , true);
 
                     if (!(json_last_error() == JSON_ERROR_NONE && is_array($json))) {
-                        $this->error('Response Error');
+                        $this->error('Response Error '.$response->getBody(true)->getContents());
                         //TYPO ALERT !!!!
                     }else if ($json['edit_time'] != $process->reponse){
                         $this->line($json['message'].' got');
