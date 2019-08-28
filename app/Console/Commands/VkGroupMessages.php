@@ -97,7 +97,7 @@ class VkGroupMessages extends Command
 
         $client = new Client();
 
-        $this->error('Loading all dialogs');
+        $this->error('Loading all dialogs ['.$jsapi.'/api/v1/vk_groups_updates ]');
 
         $groupUpdates = $this->requestGET([] , $jsapi.'/api/v1/vk_groups_updates');
 
