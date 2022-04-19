@@ -13,7 +13,7 @@ Please be always aware of what you’re doing.
 I AM NOT RESPONSIBLE FOR ANY DAMAGES THAT HAPPEN BY USING THIS SOFTWARE!
 
 
-##16.07.2018 
+## 16.07.2018 
 
 #1 /var/www/vendor/irazasyed/telegram-bot-sdk/src/Api.php(1014): Telegram\Bot\TelegramClient->sendRequest(Object(Telegram\Bot\TelegramRequest))
 #2 /var/www/vendor/irazasyed/telegram-bot-sdk/src/Api.php(957): Telegram\Bot\Api->sendRequest('POST', 'getMe', Array)
